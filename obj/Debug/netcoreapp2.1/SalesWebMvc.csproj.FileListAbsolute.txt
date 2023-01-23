@@ -34,4 +34,3 @@ D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\SalesWebMvc.pdb
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\SalesWebMvc.genruntimeconfig.cache
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\SalesWebMvc.csproj.CopyComplete
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\SalesWebMvc.csproj.AssemblyReference.cache
-D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\Departments\Index.cshtml.g.cs
