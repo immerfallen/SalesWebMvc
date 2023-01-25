@@ -58,15 +58,10 @@ namespace SalesWebMvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Email,BaseSalary,BirthDate")] Seller seller)
+        public IActionResult Create([Bind("Id,Name,Email,BaseSalary,BirthDate")] Seller seller)
         {
-            if (ModelState.IsValid)
-            {
-                _context.Add(seller);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(seller);
+            _service.Insert(seller);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Sellers/Edit/5
