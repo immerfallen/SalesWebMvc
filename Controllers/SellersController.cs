@@ -67,6 +67,14 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create([Bind("Id,Name,Email,BaseSalary,BirthDate, Department, DepartmentId")] Seller seller)
         {
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                return View(new SellerFormViewModel { 
+                Departments = departments,
+                Seller = seller
+                });
+            }
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
@@ -104,6 +112,17 @@ namespace SalesWebMvc.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,BaseSalary,BirthDate,Department, DepartmentId")] Seller seller)
         {
+
+            if (!ModelState.IsValid)
+            {
+                var departments = _departmentService.FindAll();
+                return View(new SellerFormViewModel
+                {
+                    Departments = departments,
+                    Seller = seller
+                });
+            }
+
             if (id != seller.Id)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id mismatch" });
