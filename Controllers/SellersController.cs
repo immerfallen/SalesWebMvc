@@ -9,6 +9,7 @@ using SalesWebMvc.Data;
 using SalesWebMvc.Models;
 using SalesWebMvc.Models.ViewModels;
 using SalesWebMvc.Services;
+using SalesWebMvc.Services.Exceptions;
 
 namespace SalesWebMvc.Controllers
 {
@@ -40,7 +41,7 @@ namespace SalesWebMvc.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller
+            var seller = await _context.Seller.Include(s=>s.Department)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (seller == null)
             {
@@ -63,7 +64,7 @@ namespace SalesWebMvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Email,BaseSalary,BirthDate, DepartmentId")] Seller seller)
+        public IActionResult Create([Bind("Id,Name,Email,BaseSalary,BirthDate, Department, DepartmentId")] Seller seller)
         {
             _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
@@ -77,12 +78,22 @@ namespace SalesWebMvc.Controllers
                 return NotFound();
             }
 
-            var seller = await _context.Seller.FindAsync(id);
+            var seller =  _sellerService.FindById(id.Value);
             if (seller == null)
             {
                 return NotFound();
             }
-            return View(seller);
+
+            List<Department> departments = _departmentService.FindAll();
+
+            SellerFormViewModel viewModel = new SellerFormViewModel()
+            {
+                Departments = departments,
+                Seller = seller
+
+            };
+
+            return View(viewModel);
         }
 
         // POST: Sellers/Edit/5
@@ -90,30 +101,34 @@ namespace SalesWebMvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,BaseSalary,BirthDate")] Seller seller)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Email,BaseSalary,BirthDate,Department, DepartmentId")] Seller seller)
         {
             if (id != seller.Id)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(seller);
+                    _sellerService.Update(seller);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!SellerExists(seller.Id))
                     {
-                        return NotFound();
+                        return BadRequest();
                     }
                     else
                     {
                         throw;
                     }
+                }
+                catch(NotFoundException)
+                {
+                    return NotFound();
                 }
                 return RedirectToAction(nameof(Index));
             }
