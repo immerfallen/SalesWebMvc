@@ -29,9 +29,9 @@ namespace SalesWebMvc.Controllers
         }
 
         // GET: Sellers
-        public IActionResult Index()
+        public async  Task<IActionResult> Index()
         {
-            return View(_sellerService.FindAll());
+            return View(await _sellerService.FindAll());
         }
 
         // GET: Sellers/Details/5
@@ -53,9 +53,9 @@ namespace SalesWebMvc.Controllers
         }
 
         // GET: Sellers/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            var departments = _departmentService.FindAll();
+            var departments = await _departmentService.FindAll();
             var formViewModel = new SellerFormViewModel{ Departments = departments};
             return View(formViewModel);
         }
@@ -65,17 +65,17 @@ namespace SalesWebMvc.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create([Bind("Id,Name,Email,BaseSalary,BirthDate, Department, DepartmentId")] Seller seller)
+        public async Task<IActionResult> Create([Bind("Id,Name,Email,BaseSalary,BirthDate, Department, DepartmentId")] Seller seller)
         {
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAll();
                 return View(new SellerFormViewModel { 
                 Departments = departments,
                 Seller = seller
                 });
             }
-            _sellerService.Insert(seller);
+            await _sellerService.Insert(seller);
             return RedirectToAction(nameof(Index));
         }
 
@@ -87,13 +87,13 @@ namespace SalesWebMvc.Controllers
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            var seller =  _sellerService.FindById(id.Value);
+            var seller =  await _sellerService.FindById(id.Value);
             if (seller == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" }); ;
             }
 
-            List<Department> departments = _departmentService.FindAll();
+            List<Department> departments = await _departmentService.FindAll();
 
             SellerFormViewModel viewModel = new SellerFormViewModel()
             {
@@ -115,7 +115,7 @@ namespace SalesWebMvc.Controllers
 
             if (!ModelState.IsValid)
             {
-                var departments = _departmentService.FindAll();
+                var departments = await _departmentService.FindAll();
                 return View(new SellerFormViewModel
                 {
                     Departments = departments,
@@ -132,7 +132,7 @@ namespace SalesWebMvc.Controllers
             {
                 try
                 {
-                    _sellerService.Update(seller);
+                    await _sellerService.Update(seller);
                     await _context.SaveChangesAsync();
                 }
                 catch (ApplicationException e )
@@ -146,21 +146,30 @@ namespace SalesWebMvc.Controllers
         }
 
         // GET: Sellers/Delete/5
-        public  IActionResult Delete(int? id)
+        public async  Task<IActionResult> Delete(int? id)
         {
+
             if (id == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not provided" });
             }
 
-            var seller = _sellerService.FindById(id.Value);
+            var seller = await _sellerService.FindById(id.Value);
 
             if (seller == null)
             {
                 return RedirectToAction(nameof(Error), new { message = "Id not found" });
-            }                        
-
-            return View(seller);
+            }
+            try
+            {
+                await _sellerService.Remove(id.Value);
+                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateException e )
+            {
+                return RedirectToAction(nameof(Error), new { message = e.Message });
+            }
+            
         }
 
         // POST: Sellers/Delete/5
@@ -169,7 +178,7 @@ namespace SalesWebMvc.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var seller = await _context.Seller.FindAsync(id);
-            _context.Seller.Remove(seller);
+           _context.Seller.Remove(seller);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
