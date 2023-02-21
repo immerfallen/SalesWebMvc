@@ -43,3 +43,6 @@ D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\Sellers\Delete.
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\Sellers\Details.cshtml.g.cs
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\Sellers\Edit.cshtml.g.cs
 D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\Sellers\Index.cshtml.g.cs
+D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\SalesWebMvc.csproj.AssemblyReference.cache
+D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\SalesRecord\Index.cshtml.g.cs
+D:\UDEMY - Curso Cs\SalesWeb\obj\Debug\netcoreapp2.1\Razor\Views\SalesRecord\SimpleSearch.cshtml.g.cs
